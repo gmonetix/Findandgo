@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">Find and go</string>
+    <string name="title_activity_maps">Map</string>
+
+    <!-- Welcome slide activity -->
+    <string name="slide_1_title">Tired of waiting ?</string>
+    <string name="slide_1_desc">Use FindN\'Go app to invite people and travel to same destination</string>
+
+    <string name="slide_2_title">Convenient !</string>
+    <string name="slide_2_desc">FindN\'Go lets you find other co-mates in real time of your choice male, female or both</string>
+
+    <string name="slide_3_title">Pool instantly!</string>
+    <string name="slide_3_desc">Use this highly populated country to your advantage</string>
+
+    <string name="slide_4_title">Save your time and money!</string>
+    <string name="slide_4_desc">FindN\'Go chrages you nothing. Just find co-mates and travel</string>
+
+    <!-- Activity -->
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="sign_in">SIGN IN</string>
+    <string name="sign_in_fb">Sign in with facebook</string>
+    <string name="sign_in_google">Sign in with google</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="sign_up">New here? Sign Up</string>
+    <string name="name">Name</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="register">Register</string>
+    <string name="login_here">Alreay a member? Login here</string>
+    <string name="enter_otp">Enter OTP here</string>
+    <string name="verify">Verify</string>
+    <string name="resend_otp">Resend OTP</string>
+    <string name="register_with_another_number">Register with another number</string>
+    <string name="send_password">Get Password</string>
+    <string name="back_to_login">Back to Login</string>
+    <string name="phone_submit">Submit</string>
+    <string name="back_to_registration">Back to Registration page</string>
+
+    <string name="email_error">enter valid email address</string>
+    <string name="password_error">above 5 characters</string>
+    <string name="name_error">above 5 characters</string>
+    <string name="number_error">enter 10 digit number</string>
+
+</resources>

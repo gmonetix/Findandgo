@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">Find and go</string>
+    <string name="title_activity_maps">Map</string>
+
+    <!-- Welcome activity -->
+    <string name="title_activity_welcome">Home Screen</string>
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">GOT IT</string>
+
+    <string name="slide_1_title">Tired of waiting for public transport and paying more money to taxi?</string>
+    <string name="slide_1_desc">Use Find N Go app to invite people and travel to same destination (pool)</string>
+
+    <string name="slide_2_title">No more stand awkwardly at the bus station!</string>
+    <string name="slide_2_desc">Pool using your android phone</string>
+
+    <string name="slide_3_title">Pool instantly!</string>
+    <string name="slide_3_desc">Use this highly populated country to your advantage</string>
+
+    <string name="slide_4_title">Save your time and money!</string>
+    <string name="slide_4_desc">Find N Go helps you find travel mates, saves your time and money</string>
+
+    <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> wallpapers hd -> clear data</string>
+    <string name="play_again">Play Again</string>
+
+    <!-- Activity -->
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="sign_in">SIGN IN</string>
+    <string name="sign_in_fb">Sign in with facebook</string>
+    <string name="sign_in_google">Sign in with google</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="sign_up">New here? Sign Up</string>
+    <string name="name">Name</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="register">Register</string>
+    <string name="login_here">Alreay a member? Login here</string>
+    <string name="enter_otp">Enter OTP here</string>
+    <string name="verify">Verify</string>
+    <string name="resend_otp">Resend OTP</string>
+    <string name="register_with_another_number">Register with another number</string>
+    <string name="send_password">Send Password</string>
+    <string name="back_to_login">Back to Login</string>
+
+</resources>

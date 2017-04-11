@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="img_width_height">120dp</dimen>
+    <dimen name="slide_title">28sp</dimen>
+    <dimen name="slide_desc">18sp</dimen>
+    <dimen name="desc_padding">40dp</dimen>
+</resources>
