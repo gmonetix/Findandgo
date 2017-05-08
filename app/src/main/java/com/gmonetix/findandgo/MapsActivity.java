@@ -1,6 +1,7 @@
 package com.gmonetix.findandgo;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,13 +14,26 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -32,9 +46,12 @@ import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-                                                    GoogleApiClient.OnConnectionFailedListener, LocationListener{
+                                                    GoogleApiClient.OnConnectionFailedListener, LocationListener,PlaceSelectionListener{
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -42,16 +59,90 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Location mLastLocation;
     private Marker mCurrLocationMarker;
 
+    private FirebaseDatabase root ;
+    private DatabaseReference pos;
+
+    LatLng selectedPosition = new LatLng(20.5937,78.9629);
+    TextView textView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.content_home);
+        /*if(FirebaseApp.getApps(this).isEmpty()) {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        }
+        root = FirebaseDatabase.getInstance();
+        pos = root.getReference("position");
+        pos.setValue("las");*/
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        textView = (TextView) findViewById(R.id.text);
+
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.home, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_search) {
+            // Method #3
+            try {
+                Intent intent = new PlaceAutocomplete.IntentBuilder
+                        (PlaceAutocomplete.MODE_OVERLAY)
+                        .build(MapsActivity.this);
+                startActivityForResult(intent, 1000);
+            } catch (GooglePlayServicesRepairableException |
+                    GooglePlayServicesNotAvailableException e) {
+                e.printStackTrace();
+            }
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPlaceSelected(Place place) {
+        Log.i("tag", "Place Selected: " + place.getName());
+        textView.setText(place.getName() + selectedPosition.toString());
+      //  selectedPosition = place.getLatLng();
+        if (mMap !=null) {
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(selectedPosition);
+            markerOptions.title("Position");
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+            mCurrLocationMarker = mMap.addMarker(markerOptions);
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(selectedPosition));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+        } else Toast.makeText(getApplicationContext(),"null",Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onError(Status status) {
+        Log.e("tag", "onError: Status = " + status.toString());
+        Toast.makeText(this, "Place selection failed: " + status.getStatusMessage(),
+                Toast.LENGTH_SHORT).show();
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1000) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(this, data);
+                this.onPlaceSelected(place);
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(this, data);
+                this.onError(status);
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
     /**
      * Manipulates the map once available.
@@ -65,7 +156,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
+        Toast.makeText(getApplicationContext(),"MAP READY",Toast.LENGTH_LONG).show();
       //  mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
         //Initialize Google Play Services
@@ -103,18 +194,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-    //    mCurrLocationMarker = mMap.addMarker(markerOptions);
-        GroundOverlayOptions newarkMap = new GroundOverlayOptions()
+        Log.d("LOCATION","Latitude - " + location.getLatitude() + " Longitude - "+ location.getLongitude());
+//        pos.setValue("Latitude - " + location.getLatitude() + " Longitude - "+ location.getLongitude());
+//        MarkerOptions markerOptions = new MarkerOptions();
+//        markerOptions.position(selectedPosition);
+//        markerOptions.title("Current Position");
+//        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+//        mCurrLocationMarker = mMap.addMarker(markerOptions);
+        /*GroundOverlayOptions newarkMap = new GroundOverlayOptions()
                 .image(BitmapDescriptorFactory.fromResource(R.drawable.logo))
                 .anchor(0, 1)
                 .position(latLng, 8600f, 6500f);
-        GroundOverlay mSydneyGroundOverlay = mMap.addGroundOverlay(newarkMap);
+        GroundOverlay mSydneyGroundOverlay = mMap.addGroundOverlay(newarkMap);*/
 
-        mSydneyGroundOverlay.setTag("Sydney");
+       // mSydneyGroundOverlay.setTag("Sydney");
       //  Circle circle = mMap.addCircle(new CircleOptions().center(latLng).strokeWidth(10).radius(10000).strokeColor(Color.RED).fillColor(0x802196F3));
 
         //move map camera

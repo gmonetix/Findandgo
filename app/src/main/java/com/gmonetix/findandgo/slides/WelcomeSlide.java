@@ -25,7 +25,7 @@ public class WelcomeSlide extends AppIntro2     {
         prefManager = new PrefFirstRun(this);
         if (!prefManager.isFirstTimeLaunch()) {
             launchHomeScreen();
-            finish();
+            WelcomeSlide.this.finish();
         }
 
         // Making notification bar transparent

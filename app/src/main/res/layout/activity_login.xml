@@ -8,10 +8,15 @@
     android:layout_height="match_parent"
     android:background="@drawable/login_background">
 
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/sign_in_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <ImageView
         android:id="@+id/appLogo"
-        android:src="@drawable/logo"
         android:layout_margin="20dp"
+        android:src="@drawable/logo"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -30,6 +35,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <ImageView
+                android:background="@drawable/user_outline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <EditText
+                android:layout_marginLeft="6dp"
+                android:hint="@string/name"
+                android:id="@+id/et_user_login_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:ems="10"
+                android:inputType="text" />
+        </LinearLayout>
+        <View
+            android:background="#9E9E9E"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+        <LinearLayout
+            android:padding="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
                 android:background="@drawable/email_outline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -43,6 +70,7 @@
                 android:ems="10"
                 android:inputType="textEmailAddress" />
         </LinearLayout>
+
         <View
             android:background="#9E9E9E"
             android:layout_width="match_parent"
@@ -52,18 +80,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <ImageView
-                android:background="@drawable/lock_outline"
+                android:background="@drawable/gender_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-            <EditText
+            <Spinner
+                android:id="@+id/spinner"
                 android:layout_marginLeft="6dp"
-                android:hint="@string/password"
-                android:id="@+id/et_user_login_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:ems="10"
-                android:inputType="textPassword" />
+                android:prompt="@string/register_with_another_number" />
         </LinearLayout>
 
     </LinearLayout>
@@ -112,7 +137,7 @@
         android:layout_marginBottom="30dp"
         android:layout_marginTop="6dp"
         android:background="@drawable/google_background"
-        android:layout_above="@+id/user_login_forgot_password"
+        android:layout_above="@+id/user_login_with_another_number"
         android:padding="10dp"
         android:gravity="center"
         android:orientation="horizontal"
@@ -136,18 +161,8 @@
     <TextView
         android:textColor="#fff"
         android:layout_alignParentBottom="true"
-        android:id="@+id/user_login_forgot_password"
-        android:text="@string/forgot_password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:textColor="#fff"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:id="@+id/user_login_registration"
-        android:text="@string/sign_up"
+        android:id="@+id/user_login_with_another_number"
+        android:text="@string/register_with_another_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

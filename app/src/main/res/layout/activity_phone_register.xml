@@ -9,19 +9,29 @@
     android:background="@drawable/login_background">
 
     <ImageView
-        android:id="@+id/appLogo"
+        android:id="@+id/phone_register_logo"
         android:src="@drawable/phone_large"
         android:layout_marginTop="100dp"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <TextView
+        android:textColor="#fff"
+        android:layout_margin="16dp"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/phone_register_text1"
+        android:layout_below="@+id/phone_register_logo"
+        android:text="Register your mobile number to use"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <LinearLayout
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="30dp"
         android:padding="16dp"
         android:background="@drawable/rounded_corner_ll"
         android:orientation="horizontal"
-        android:layout_below="@+id/appLogo"
+        android:layout_below="@+id/phone_register_text1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/phone_registerr_ll1">
@@ -43,7 +53,7 @@
     <Button
         android:background="@drawable/login_button"
         android:layout_marginTop="16dp"
-        android:id="@+id/submit_number"
+        android:id="@+id/phone_register_submit_number"
         android:textColor="#fff"
         android:text="@string/phone_submit"
         android:layout_below="@+id/phone_registerr_ll1"
@@ -52,10 +62,11 @@
 
     <TextView
         android:textColor="#fff"
-        android:layout_centerHorizontal="true"
+        android:layout_margin="16dp"
         android:layout_alignParentBottom="true"
-        android:id="@+id/phone_register_login"
-        android:text="@string/back_to_registration"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/phone_register_privacyPolicy"
+        android:text="Privacy Policy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
