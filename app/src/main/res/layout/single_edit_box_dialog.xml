@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_margin="10dp"
     android:padding="6dp"
@@ -12,12 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:textSize="25sp"
+        android:textSize="20sp"
         android:background="@android:color/transparent"
         android:inputType="textPersonName"
         />
 
     <LinearLayout
+        android:layout_below="@+id/single_edit_text_dialog"
         android:layout_marginTop="10dp"
         android:weightSum="2"
         android:orientation="horizontal"
@@ -42,4 +42,4 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

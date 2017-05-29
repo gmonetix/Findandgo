@@ -92,6 +92,7 @@ public class OtpVerificationActivity extends AppCompatActivity {
                                     utils.setEmail(object.getString("email"));
                                     utils.setNumber(object.getString("phone_number"));
                                     utils.setImageUrl(object.getString("image_url"));
+                                    utils.setLoginStatus(true);
                                 } else if (object.getString("code").equals("not_exist")) {
                                     result = 2;
                                 } else {

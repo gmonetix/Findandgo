@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="NOTIFICATIONS">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="Push Notifications"
+            android:title="Push Notifications">
+        </SwitchPreference>
+        <RingtonePreference
+            android:defaultValue="content://settings/system/notification_sound"
+            android:dependency="Ringtone"
+            android:key="Ringtone"
+            android:ringtoneType="notification"
+            android:title="Ringtone" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="Vibrate"
+            android:title="Vibrate"
+            android:key="Vibrate"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="OTHERS">
+        <Preference
+            android:summary="gauravbordoloi@gmonetix.com"
+            android:title="Developer Email" />
+        <Preference
+            android:summary="@string/copyright"
+            android:title="Copyright" />
+        <Preference
+            android:summary="Version 1.0"
+            android:title="Build Version" />
+        <Preference
+            android:key="Term &amp; Policies"
+            android:title="Term &amp; Policies" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

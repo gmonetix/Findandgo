@@ -26,6 +26,7 @@ import com.gmonetix.findandgo.HomeActivity;
 import com.gmonetix.findandgo.MapsActivity;
 import com.gmonetix.findandgo.R;
 import com.gmonetix.findandgo.User;
+import com.gmonetix.findandgo.helper.Utils;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -45,6 +46,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.internal.Util;
+
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
     private EditText etName, etEmail;
@@ -54,6 +57,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Spinner spinnerGender;
 
     private String email, name,gender,number;
+
+    private Utils utils;
 
     GoogleApiClient mGoogleApiClient;
 
@@ -160,6 +165,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
     private void init() {
+
+        utils = new Utils(LoginActivity.this,LoginActivity.this);
+
         loginFb = (LinearLayout) findViewById(R.id.user_login_via_facebook);
         loginGoogle= (LinearLayout) findViewById(R.id.user_login_via_google);
         login = (Button) findViewById(R.id.sign_in);
@@ -198,12 +206,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void login() {
         //login here
-        User user = new User(name,email);
+        /*User user = new User(name,email);
         mFirebaseInstance = FirebaseDatabase.getInstance();
         dbReference = mFirebaseInstance.getReference();
         DatabaseReference child1 = dbReference.child("users");
         DatabaseReference child2 = child1.child(number);
-        child2.setValue(user);
+        child2.setValue(user);*/
 
 
         RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
@@ -216,7 +224,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             JSONObject object = jsonArray.getJSONObject(0);
                             if(object.getString("code").equals("success")){
                                 Toast.makeText(getApplicationContext(),object.getString("message"),Toast.LENGTH_SHORT).show();
-
+                                utils.setName(name);
+                                utils.setEmail(email);
+                                utils.setGender(gender);
+                                utils.setNumber(number);
+                                utils.setLoginStatus(true);
                             } else {
                                 Toast.makeText(getApplicationContext(),object.getString("message"),Toast.LENGTH_SHORT).show();
                             }

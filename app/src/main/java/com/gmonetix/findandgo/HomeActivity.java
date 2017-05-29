@@ -1,8 +1,6 @@
 package com.gmonetix.findandgo;
 
-import android.*;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -12,11 +10,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -52,7 +48,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -62,8 +57,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -91,6 +84,7 @@ public class HomeActivity extends AppCompatActivity
 
 
     FloatingActionButton fabSeacrhPeople;
+    private Utils utils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +101,7 @@ public class HomeActivity extends AppCompatActivity
         mapFragment.getMapAsync(this);
 
         fabSeacrhPeople = (FloatingActionButton) findViewById(R.id.fab_home_search_people);
-        Utils utils = new Utils(HomeActivity.this,HomeActivity.this);
+        utils = new Utils(HomeActivity.this,HomeActivity.this);
 
 //        mFirebaseInstance = FirebaseDatabase.getInstance();
 //        dbReference = mFirebaseInstance.getReference("pos");
@@ -162,6 +156,37 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
+        /*new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        getLocations();
+                    }
+                });
+            }
+        },5000);*/
+    }
+
+    private LatLng getLocations() {
+        final  LatLng latLng = new LatLng(0,0);
+        //code here
+        StringRequest rqst = new StringRequest(Request.Method.POST, "", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        RequestQueue rq = Volley.newRequestQueue(getApplicationContext());
+        rq.add(rqst);
+
+        return latLng;
     }
 
     @Override
@@ -223,7 +248,7 @@ public class HomeActivity extends AppCompatActivity
                 break;
         }
 
-        item.setChecked(true);
+        //item.setChecked(true);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -266,7 +291,6 @@ public class HomeActivity extends AppCompatActivity
         if (mCurrLocationMarker != null) {
             mCurrLocationMarker.remove();
         }
-
         //Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         Log.d("LOCATION","Latitude - " + location.getLatitude() + " Longitude - "+ location.getLongitude());
@@ -327,7 +351,7 @@ public class HomeActivity extends AppCompatActivity
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> params = new HashMap<String, String>();
 
-                params.put("phone_number","7478870112");
+                params.put("phone_number",utils.getNumber());
                 params.put("user_latitude", String.valueOf(mLastLocation.getLatitude()));
                 params.put("user_longitude",String.valueOf(mLastLocation.getLongitude()));
 

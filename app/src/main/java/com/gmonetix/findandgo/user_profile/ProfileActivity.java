@@ -14,7 +14,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
@@ -53,7 +56,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private FloatingActionButton editPic;
     private Switch numberVisibility;
 
-    private Boolean numberVisibilityState;
+    private int numberVisibilityState = 0;
     private Utils utils;
 
     private String imageString;
@@ -105,6 +108,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 }
             });
         }
+        numberVisibility.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                updateNumberVisibility(isChecked);
+            }
+        });
+
     }
 
     private void init() {
@@ -124,7 +134,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         utils = new Utils(ProfileActivity.this,ProfileActivity.this);
 
-        numberVisibilityState = numberVisibility.isChecked();
     }
 
     @Override
@@ -138,9 +147,16 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 utils.showImageChooser(IMAGE_CHOOSER_CODE);
                 break;
             case R.id.profile_activity_edit_name:
-                customDialog.singleEditBoxDialog("Enter your new name");
+                String name = customDialog.updateNameDialog("Enter your new name");
+                if (name != null && !name.equals("")) {
+                    tvName.setText(name);
+                }
                 break;
             case R.id.profile_activity_edit_email:
+                String email = customDialog.updateEmailDialog("Enter your new email");
+                if (email != null && !email.equals("")) {
+                    tvEmail.setText(email);
+                }
                 break;
         }
     }
@@ -214,6 +230,127 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         };
         RequestQueue requestQueue = Volley.newRequestQueue(ProfileActivity.this);
         requestQueue.add(stringRequest);
+    }
+
+    private void updateNumberVisibility(boolean value) {
+        if (value) {
+            numberVisibilityState = 1;
+        } else {
+            numberVisibilityState = 0;
+        }
+
+        final ProgressDialog loading = ProgressDialog.show(this,"Updating...","Please wait...",false,false);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://www.findandgo.in/server/number_visibility.php",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        loading.dismiss();
+                        try {
+                            JSONArray array = new JSONArray(response);
+                            JSONObject object = array.getJSONObject(0);
+                            if (object.getString("code").equals("success")) {
+                                Toast.makeText(ProfileActivity.this,object.getString("message"),Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(ProfileActivity.this,object.getString("message"),Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(ProfileActivity.this,e.toString(),Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                loading.dismiss();
+                Toast.makeText(ProfileActivity.this,error.toString(),Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("phone_number",utils.getNumber());
+                params.put("phone_visibility",String.valueOf(numberVisibilityState));
+                return  params;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(ProfileActivity.this);
+        requestQueue.add(stringRequest);
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.profile_activity_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.delete_account_menu:
+                new AlertDialog.Builder(this)
+                        .setTitle("Warning")
+                        .setIcon(R.drawable.ic_warning)
+                        .setMessage("Are you sure you want to delete your account?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                deleteAccount(utils.getNumber());
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void deleteAccount(final String number) {
+        final ProgressDialog loading = ProgressDialog.show(this,"Deleting...","Please wait...",false,false);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://www.findandgo.in/server/deleteAccount.php",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        loading.dismiss();
+                        try {
+                            JSONArray array = new JSONArray(response);
+                            JSONObject object = array.getJSONObject(0);
+                            if (object.getString("code").equals("success")) {
+                                Toast.makeText(ProfileActivity.this,object.getString("message"),Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(ProfileActivity.this,object.getString("message"),Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(ProfileActivity.this,e.toString(),Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                loading.dismiss();
+                Toast.makeText(ProfileActivity.this,error.toString(),Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("phone_number",number);
+                return  params;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(ProfileActivity.this);
+        requestQueue.add(stringRequest);
+
     }
 
 }
