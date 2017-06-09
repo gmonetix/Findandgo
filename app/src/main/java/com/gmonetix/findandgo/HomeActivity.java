@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -66,8 +67,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
@@ -162,31 +167,48 @@ public class HomeActivity extends AppCompatActivity
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        getLocations();
+
                     }
                 });
             }
         },5000);*/
     }
 
-    private LatLng getLocations() {
-        final  LatLng latLng = new LatLng(0,0);
-        //code here
-        StringRequest rqst = new StringRequest(Request.Method.POST, "", new Response.Listener<String>() {
+    private void getLocations(final VolleyCallback callback) {
+        final List<LatLng> pos = new ArrayList<LatLng>();
+        StringRequest rqst = new StringRequest(Request.Method.POST, "http://www.findandgo.in/server/getAllUsersLocation.php",
+                new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
+                try {
+                    JSONArray array = new JSONArray(response);
+                    for (int i=0; i<array.length(); i++) {
+                        JSONObject object = array.getJSONObject(i);
+                        Double lat = Double.parseDouble(object.getString("user_latitude"));
+                        Double longi = Double.parseDouble(object.getString("user_longitude"));
+                        LatLng latLng = new LatLng(lat,longi);
+                        pos.add(latLng);
+                    }
+                    if(pos.size()>0){
+                        callback.onSuccess(pos);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                error.printStackTrace();
+                Toast.makeText(HomeActivity.this,error.toString(),Toast.LENGTH_SHORT).show();
             }
         });
         RequestQueue rq = Volley.newRequestQueue(getApplicationContext());
         rq.add(rqst);
+    }
 
-        return latLng;
+    public interface VolleyCallback{
+        void onSuccess(List<LatLng> result);
     }
 
     @Override
@@ -272,6 +294,34 @@ public class HomeActivity extends AppCompatActivity
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
         }
+
+        getLocations(new VolleyCallback() {
+            @Override
+            public void onSuccess(List<LatLng> result) {
+                for (int i=0; i<result.size();i++) {
+                    MarkerOptions options = new MarkerOptions().position(result.get(i));
+                    mMap.addMarker(options);
+                }
+            }
+        });
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getLocations(new VolleyCallback() {
+                    @Override
+                    public void onSuccess(List<LatLng> result) {
+                        mMap.clear();
+                        for (int i =0;i<result.size();i++) {
+                            MarkerOptions options = new MarkerOptions().position(result.get(i));
+                            mMap.addMarker(options);
+                        }
+                    }
+                });
+                handler.postDelayed(this,30000);
+            }
+        },0);
 
     }
 
